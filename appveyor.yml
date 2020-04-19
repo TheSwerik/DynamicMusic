@@ -1,0 +1,41 @@
+﻿environment:
+  my_version_number: 1.0
+
+version: $(my_version_number).{build}
+
+skip_tags: true
+
+build:
+  verbosity: minimal
+
+build_script:
+  - gradlew.bat assemble --info --no-daemon -PbintrayUserName -PbintrayApiKey
+
+test_script:
+  - gradlew.bat check --info --no-daemon -PbintrayUserName -PbintrayApiKey
+
+cache:
+  - C:\Users\appveyor\.gradle
+
+for:
+  - branches:
+      only:
+        - master
+
+    after_test:
+
+    artifacts:
+      - path: /core/build/libs/*.jar
+        name: jar
+
+    deploy:
+      - provider: GitHub
+        release: $(my_version_number)
+        auth_token: # encrypted token:
+          secure: HESVuhwKdUbPpbBsQrWslB7GYNy5r03/MN/enpu7UWbY886bOE+EpbEFwAVMrtLO
+        artifact: jar
+        draft: false
+        prerelease: false
+        force_update: false
+        on:
+          branch: master
