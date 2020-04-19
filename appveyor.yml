@@ -11,9 +11,6 @@ build:
 build_script:
   - gradlew.bat assemble --info --no-daemon -PbintrayUserName -PbintrayApiKey
 
-test_script:
-  - gradlew.bat check --info --no-daemon -PbintrayUserName -PbintrayApiKey
-
 cache:
   - C:\Users\appveyor\.gradle
 
@@ -23,6 +20,7 @@ for:
         - master
 
     after_test:
+      - ps: Rename-Item -Path "/core/build/libs/*.jar" -NewName "DynamicMusic $($env:my_version_number).jar"
 
     artifacts:
       - path: /core/build/libs/*.jar
