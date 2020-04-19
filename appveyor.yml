@@ -20,7 +20,7 @@ for:
         - master
 
     after_build:
-      - ps: Rename-Item -LiteralPath core\build\libs\core-1.0.jar -NewName "DynamicMusic-$($env:my_version_number).jar"
+      - ps: Rename-Item -LiteralPath core\build\libs\core-$($env:my_version_number).jar -NewName "DynamicMusic-$($env:my_version_number).jar"
 
     artifacts:
       - path: /core/build/libs/*.jar
