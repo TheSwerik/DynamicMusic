@@ -426,13 +426,13 @@ public class DynamicMusic {
     private void fadeIn(final float milliseconds, final String track, final float maxVolume) {
         boolean useVolume = maxVolume >= 0 && maxVolume <= 1;
         new Thread(() -> {
-            long startTime = System.nanoTime() / 1000;
-            float percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
+            long startTime = System.nanoTime() / 1_000_000;
+            float percentage = (float) ((System.nanoTime() / 1_000_000) - startTime) / milliseconds;
             float volume = useVolume ? maxVolume : tracks.get(track).getVolume();
             if (volume == 0) volume = 1;
             while (percentage * volume <= volume) {
                 tracks.get(track).setVolume(percentage * volume);
-                percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
+                percentage = (float) ((System.nanoTime() / 1_000_000) - startTime) / milliseconds;
             }
             tracks.get(track).setVolume(volume);
         }).start();
@@ -445,13 +445,13 @@ public class DynamicMusic {
     private void fadeOut(final float milliseconds, final String track, final float minVolume) {
         boolean useVolume = minVolume >= 0 && minVolume <= 1;
         new Thread(() -> {
-            long startTime = System.nanoTime() / 1000;
-            float percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
+            long startTime = System.nanoTime() / 1_000_000;
+            float percentage = (float) ((System.nanoTime() / 1_000_000) - startTime) / milliseconds;
             float volume = useVolume ? minVolume : 0;
             float maxVolume = tracks.get(track).getVolume();
             while (maxVolume * (1 - percentage) >= volume) {
                 tracks.get(track).setVolume(maxVolume * (1 - percentage));
-                percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
+                percentage = (float) ((System.nanoTime() / 1_000_000) - startTime) / milliseconds;
             }
             tracks.get(track).setVolume(volume);
         }).start();

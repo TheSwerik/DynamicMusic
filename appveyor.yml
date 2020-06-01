@@ -1,5 +1,5 @@
 ﻿environment:
-  my_version_number: 1.4 # ALSO CHANGE IN BUILD.GRADLE
+  my_version_number: 1.5 # ALSO CHANGE IN BUILD.GRADLE
 
 version: $(my_version_number).{build}
 
