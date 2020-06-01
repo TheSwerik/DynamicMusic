@@ -322,6 +322,101 @@ public class DynamicMusic {
         return this;
     }
 
+    /**
+     * Crossfades two tracks.
+     *
+     * @param milliseconds time in milliseconds how long the fade should take.
+     * @param trackIn      the track that should fade in.
+     * @param trackOut     the track that should fade out.
+     * @return this DynamicMusic Instance.
+     */
+    public DynamicMusic crossFade(final float milliseconds, final String trackIn, final String trackOut) {
+        fadeIn(milliseconds, trackIn, tracks.get(trackOut).getVolume());
+        fadeOut(milliseconds, trackOut);
+        return this;
+    }
+
+    /**
+     * Crossfades two tracks. The in-track will be fadid in to the specified volume.
+     *
+     * @param milliseconds time in milliseconds how long the fade should take.
+     * @param volume       max volume the fadeIn-Track should reach.
+     * @param trackIn      the track that should fade in.
+     * @param trackOut     the track that should fade out.
+     * @return this DynamicMusic Instance.
+     */
+    public DynamicMusic crossFade(final float milliseconds, final float volume, final String trackIn, final String trackOut) {
+        fadeIn(milliseconds, trackIn, volume);
+        fadeOut(milliseconds, trackOut);
+        return this;
+    }
+
+    /**
+     * Crossfades every track out and every specified track in.
+     *
+     * @param milliseconds time in milliseconds how long the fade should take.
+     * @param tracksIn     the tracks that should fade in.
+     * @return this DynamicMusic Instance.
+     */
+    public DynamicMusic crossFadeIn(final float milliseconds, final String... tracksIn) {
+        for (String trackOut : tracks.keySet()) {
+            Music track = tracks.get(trackOut);
+            if (track.getVolume() > 0) fadeOut(milliseconds, trackOut);
+        }
+        fadeIn(milliseconds, tracksIn);
+        return this;
+    }
+
+    /**
+     * Crossfades every track out and every specified track in.
+     *
+     * @param milliseconds time in milliseconds how long the fade should take.
+     * @param volume       max volume the fadeIn-Tracks should reach.
+     * @param tracksIn     the tracks that should fade in.
+     * @return this DynamicMusic Instance.
+     */
+    public DynamicMusic crossFadeIn(final float milliseconds, final float volume, final String... tracksIn) {
+        for (String trackOut : tracks.keySet()) {
+            Music track = tracks.get(trackOut);
+            if (track.getVolume() > 0) fadeOut(milliseconds, trackOut);
+        }
+        fadeIn(milliseconds, volume, tracksIn);
+        return this;
+    }
+
+    /**
+     * Crossfades every track in and every specified track out.
+     *
+     * @param milliseconds time in milliseconds how long the fade should take.
+     * @param tracksOut    the tracks that should fade out.
+     * @return this DynamicMusic Instance.
+     */
+    public DynamicMusic crossFadeOut(final float milliseconds, final String... tracksOut) {
+        for (String trackIn : tracks.keySet()) {
+            Music track = tracks.get(trackIn);
+            if (track.getVolume() < 0.0001) fadeIn(milliseconds, trackIn);
+        }
+        fadeOut(milliseconds, tracksOut);
+        return this;
+    }
+
+    /**
+     * Crossfades every track in and every specified track out.
+     *
+     * @param milliseconds time in milliseconds how long the fade should take.
+     * @param volume       the min volume each track should reach.
+     * @param tracksOut    the tracks that should fade out.
+     * @return this DynamicMusic Instance.
+     */
+    public DynamicMusic crossFadeOut(final float milliseconds, final float volume, final String... tracksOut) {
+        for (String trackIn : tracks.keySet()) {
+            Music track = tracks.get(trackIn);
+            if (track.getVolume() < 0.0001) fadeIn(milliseconds, trackIn);
+        }
+        fadeOut(milliseconds, volume, tracksOut);
+        return this;
+    }
+
     // Helper Methods:
 
     private void fadeIn(final float milliseconds, final String track) {
@@ -335,10 +430,11 @@ public class DynamicMusic {
             float percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
             float volume = useVolume ? maxVolume : tracks.get(track).getVolume();
             if (volume == 0) volume = 1;
-            while (percentage <= volume) {
-                tracks.get(track).setVolume(percentage);
+            while (percentage * volume <= volume) {
+                tracks.get(track).setVolume(percentage * volume);
                 percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
             }
+            tracks.get(track).setVolume(volume);
         });
     }
 
@@ -352,10 +448,12 @@ public class DynamicMusic {
             long startTime = System.nanoTime() / 1000;
             float percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
             float volume = useVolume ? minVolume : 0;
-            while (1 - percentage >= volume) {
-                tracks.get(track).setVolume(percentage);
+            float maxVolume = tracks.get(track).getVolume();
+            while (maxVolume * (1 - percentage) >= volume) {
+                tracks.get(track).setVolume(maxVolume * (1 - percentage));
                 percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
             }
+            tracks.get(track).setVolume(volume);
         });
     }
 }
