@@ -6,9 +6,6 @@ buildscript {
 		maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 		jcenter()
 	}
-	dependencies {
-
-	}
 }
 
 allprojects {
@@ -34,11 +31,4 @@ subprojects {
 		maven { url 'https://jitpack.io' }
 		jcenter()
 	}
-}
-
-// Clearing Eclipse project data in root folder:
-tasks.eclipse.doLast {
-	delete '.project'
-	delete '.classpath'
-	delete '.settings/'
 }
