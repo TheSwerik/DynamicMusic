@@ -210,7 +210,6 @@ public class DynamicMusic {
         return this;
     }
 
-
     /**
      * Fades the specified Tracks in to their previous Volume or, if 0, maxVolume
      *
@@ -237,7 +236,6 @@ public class DynamicMusic {
         }
         return this;
     }
-
 
     /**
      * Fades the specified Tracks in to the specified Volume
@@ -268,7 +266,6 @@ public class DynamicMusic {
         return this;
     }
 
-
     /**
      * Fades out the specified Tracks to 0
      *
@@ -295,7 +292,6 @@ public class DynamicMusic {
         }
         return this;
     }
-
 
     /**
      * Fades out the specified Tracks to the specified Volume
@@ -325,7 +321,6 @@ public class DynamicMusic {
         }
         return this;
     }
-
 
     // Helper Methods:
 
