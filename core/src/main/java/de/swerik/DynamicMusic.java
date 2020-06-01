@@ -425,7 +425,7 @@ public class DynamicMusic {
 
     private void fadeIn(final float milliseconds, final String track, final float maxVolume) {
         boolean useVolume = maxVolume >= 0 && maxVolume <= 1;
-        Thread thread = new Thread(() -> {
+        new Thread(() -> {
             long startTime = System.nanoTime() / 1000;
             float percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
             float volume = useVolume ? maxVolume : tracks.get(track).getVolume();
@@ -435,16 +435,16 @@ public class DynamicMusic {
                 percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
             }
             tracks.get(track).setVolume(volume);
-        });
+        }).start();
     }
 
     private void fadeOut(final float milliseconds, final String track) {
-        fadeIn(milliseconds, track, -1);
+        fadeOut(milliseconds, track, -1);
     }
 
     private void fadeOut(final float milliseconds, final String track, final float minVolume) {
         boolean useVolume = minVolume >= 0 && minVolume <= 1;
-        Thread thread = new Thread(() -> {
+        new Thread(() -> {
             long startTime = System.nanoTime() / 1000;
             float percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
             float volume = useVolume ? minVolume : 0;
@@ -454,6 +454,6 @@ public class DynamicMusic {
                 percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
             }
             tracks.get(track).setVolume(volume);
-        });
+        }).start();
     }
 }
