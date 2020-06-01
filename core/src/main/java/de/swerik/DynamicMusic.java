@@ -209,4 +209,158 @@ public class DynamicMusic {
         }
         return this;
     }
+
+
+    /**
+     * Fades the specified Tracks in to their previous Volume or, if 0, maxVolume
+     *
+     * @param milliseconds how long the fade happens
+     * @param trackNames   the Tracks that will fade in
+     * @return this Dynamic Music Instance
+     */
+    public DynamicMusic fadeIn(final float milliseconds, final String... trackNames) {
+        for (String track : trackNames) {
+            fadeIn(milliseconds, track);
+        }
+        return this;
+    }
+
+    /**
+     * Fades every Track in to their previous Volume or, if 0, maxVolume
+     *
+     * @param milliseconds how long the fade happens
+     * @return this Dynamic Music Instance
+     */
+    public DynamicMusic fadeIn(final float milliseconds) {
+        for (String track : tracks.keySet()) {
+            fadeIn(milliseconds, track);
+        }
+        return this;
+    }
+
+
+    /**
+     * Fades the specified Tracks in to the specified Volume
+     *
+     * @param milliseconds how long the fade happens
+     * @param volume       the max volume it should reach
+     * @param trackNames   the Tracks that will fade in
+     * @return this Dynamic Music Instance
+     */
+    public DynamicMusic fadeIn(final float milliseconds, final float volume, final String... trackNames) {
+        for (String track : trackNames) {
+            fadeIn(milliseconds, track, volume);
+        }
+        return this;
+    }
+
+    /**
+     * Fades every Track in to the specified Volume
+     *
+     * @param milliseconds how long the fade happens
+     * @param volume       the max volume it should reach
+     * @return this Dynamic Music Instance
+     */
+    public DynamicMusic fadeIn(final float milliseconds, final float volume) {
+        for (String track : tracks.keySet()) {
+            fadeIn(milliseconds, track, volume);
+        }
+        return this;
+    }
+
+
+    /**
+     * Fades out the specified Tracks to 0
+     *
+     * @param milliseconds how long the fade takes
+     * @param trackNames   the Tracks that will fade out
+     * @return this Dynamic Music Instance
+     */
+    public DynamicMusic fadeOut(final float milliseconds, final String... trackNames) {
+        for (String track : trackNames) {
+            fadeOut(milliseconds, track);
+        }
+        return this;
+    }
+
+    /**
+     * Fades out every Track to 0
+     *
+     * @param milliseconds how long the fade takes
+     * @return this Dynamic Music Instance
+     */
+    public DynamicMusic fadeOut(final float milliseconds) {
+        for (String track : tracks.keySet()) {
+            fadeOut(milliseconds, track);
+        }
+        return this;
+    }
+
+
+    /**
+     * Fades out the specified Tracks to the specified Volume
+     *
+     * @param milliseconds how long the fade takes
+     * @param volume       the min volume it should reach
+     * @param trackNames   the Tracks that will fade out
+     * @return this Dynamic Music Instance
+     */
+    public DynamicMusic fadeOut(final float milliseconds, final float volume, final String... trackNames) {
+        for (String track : trackNames) {
+            fadeOut(milliseconds, track, volume);
+        }
+        return this;
+    }
+
+    /**
+     * Fades out every Track to the specified Volume
+     *
+     * @param milliseconds how long the fade takes
+     * @param volume       the min volume it should reach
+     * @return this Dynamic Music Instance
+     */
+    public DynamicMusic fadeOut(final float milliseconds, final float volume) {
+        for (String track : tracks.keySet()) {
+            fadeOut(milliseconds, track, volume);
+        }
+        return this;
+    }
+
+
+    // Helper Methods:
+
+    private void fadeIn(final float milliseconds, final String track) {
+        fadeIn(milliseconds, track, -1);
+    }
+
+    private void fadeIn(final float milliseconds, final String track, final float maxVolume) {
+        boolean useVolume = maxVolume >= 0 && maxVolume <= 1;
+        Thread thread = new Thread(() -> {
+            long startTime = System.nanoTime() / 1000;
+            float percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
+            float volume = useVolume ? maxVolume : tracks.get(track).getVolume();
+            if (volume == 0) volume = 1;
+            while (percentage <= volume) {
+                tracks.get(track).setVolume(percentage);
+                percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
+            }
+        });
+    }
+
+    private void fadeOut(final float milliseconds, final String track) {
+        fadeIn(milliseconds, track, -1);
+    }
+
+    private void fadeOut(final float milliseconds, final String track, final float minVolume) {
+        boolean useVolume = minVolume >= 0 && minVolume <= 1;
+        Thread thread = new Thread(() -> {
+            long startTime = System.nanoTime() / 1000;
+            float percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
+            float volume = useVolume ? minVolume : 0;
+            while (1 - percentage >= volume) {
+                tracks.get(track).setVolume(percentage);
+                percentage = (float) ((System.nanoTime() / 1000) - startTime) / milliseconds;
+            }
+        });
+    }
 }
